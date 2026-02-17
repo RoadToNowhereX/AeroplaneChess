@@ -535,6 +535,18 @@ function drawBoard() {
         }
     }
 
+    // Draw takeoff positions (black circles with directional arrows)
+    var takeoffPositions = [
+        { top: 45, left: 678, id: 100, arrow: 'down' },    // Red takeoff → moves down
+        { top: 678, left: 896, id: 101, arrow: 'left' },   // Blue takeoff → moves left
+        { top: 892, left: 258, id: 102, arrow: 'up' },     // Yellow takeoff → moves up
+        { top: 259, left: 45, id: 103, arrow: 'right' }    // Green takeoff → moves right
+    ];
+    for (var t = 0; t < takeoffPositions.length; t++) {
+        var tp = takeoffPositions[t];
+        createBoardCell(tp.top, tp.left, '#333333', tp.id, 'board-cell-arrow board-cell-arrow-' + tp.arrow);
+    }
+
     // Draw super jump dashed lines
     drawSuperJumpLines();
 }
@@ -632,6 +644,16 @@ function createBoardCell(top, left, color, id, extraClass) {
 
 
 /**
+ * Map piece color to takeoff cell ID
+ */
+var takeoffCellMap = {
+    'red': 100,
+    'blue': 101,
+    'yellow': 102,
+    'green': 103
+};
+
+/**
  * Open the cell info modal
  * @param cellId - the COORD id of the clicked cell
  */
@@ -666,11 +688,21 @@ $j(function () {
     // Click through pieces to show cell info when piece is not in movable state
     $j(document).on('click', '.plane', function (e) {
         var state = $j(this).attr('state');
-        if (!$j(this).hasClass('pointer') && (state === 'ready' || state === 'running')) {
-            var coordId = $j(this).attr('coordId');
-            if (coordId) {
-                e.stopPropagation();
-                openCellModal(parseInt(coordId));
+        if (!$j(this).hasClass('pointer')) {
+            if (state === 'ready') {
+                // Piece is at takeoff position, use takeoff cell ID
+                var type = $j(this).attr('type');
+                var takeoffId = takeoffCellMap[type];
+                if (takeoffId) {
+                    e.stopPropagation();
+                    openCellModal(takeoffId);
+                }
+            } else if (state === 'running') {
+                var coordId = $j(this).attr('coordId');
+                if (coordId) {
+                    e.stopPropagation();
+                    openCellModal(parseInt(coordId));
+                }
             }
         }
     });
