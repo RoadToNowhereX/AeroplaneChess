@@ -660,4 +660,15 @@ $j(function () {
             closeCellModal();
         }
     });
+
+    // Click through pieces to show cell info when piece is not in movable state
+    $j(document).on('click', '.plane', function (e) {
+        if (!$j(this).hasClass('pointer')) {
+            var coordId = $j(this).attr('coordId');
+            if (coordId) {
+                e.stopPropagation();
+                openCellModal(parseInt(coordId));
+            }
+        }
+    });
 });
