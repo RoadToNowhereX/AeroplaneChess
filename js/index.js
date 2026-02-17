@@ -616,5 +616,53 @@ function createBoardCell(top, left, color, id, extraClass) {
         'background-color': color
     });
 
+    // Add click event for cells on the path (those with an id)
+    if (id !== undefined) {
+        $j(cell).addClass('board-cell-clickable').attr('data-cell-id', id);
+        $j(cell).on('click', function (e) {
+            e.stopPropagation();
+            openCellModal(id);
+        });
+    }
+
     $j('.main').prepend(cell);
 }
+
+/**
+ * Cell info data store - maps cell id to text content
+ * Default is "empty" for all cells
+ */
+var cellInfoData = {};
+
+/**
+ * Open the cell info modal
+ * @param cellId - the COORD id of the clicked cell
+ */
+function openCellModal(cellId) {
+    var text = cellInfoData[cellId] || 'empty';
+    $j('#cellModalContent').text(text);
+    $j('#cellModal').addClass('active');
+}
+
+/**
+ * Close the cell info modal
+ */
+function closeCellModal() {
+    $j('#cellModal').removeClass('active');
+}
+
+// Modal event bindings (after DOM ready)
+$j(function () {
+    // Close modal via ❌ button
+    $j('#cellModalClose').on('click', function (e) {
+        e.stopPropagation();
+        closeCellModal();
+    });
+
+    // Close modal by clicking overlay (outside the dialog)
+    $j('#cellModal').on('click', function (e) {
+        if (e.target === this) {
+            closeCellModal();
+        }
+    });
+});

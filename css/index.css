@@ -518,3 +518,92 @@
 .piece-radio:hover span {
     opacity: 0.9;
 }
+
+/* Board cell clickable */
+.board-cell-clickable {
+    cursor: pointer;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.board-cell-clickable:hover {
+    transform: scale(1.2);
+    box-shadow: 0 0 8px 2px rgba(255, 255, 255, 0.6), inset 0 0 5px rgba(0, 0, 0, 0.2);
+    z-index: 15;
+}
+
+/* Cell Info Modal Overlay */
+.cell-modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.45);
+    z-index: 100000;
+    justify-content: center;
+    align-items: center;
+    animation: modal-fade-in 0.2s ease;
+}
+
+.cell-modal-overlay.active {
+    display: flex;
+}
+
+@keyframes modal-fade-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* Cell Info Modal Dialog */
+.cell-modal-dialog {
+    position: relative;
+    background: linear-gradient(135deg, #ffffff, #f5f5f5);
+    border-radius: 16px;
+    padding: 40px 48px 32px;
+    min-width: 300px;
+    max-width: 500px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(255, 255, 255, 0.1);
+    animation: modal-slide-in 0.25s ease;
+    text-align: center;
+}
+
+@keyframes modal-slide-in {
+    from {
+        opacity: 0;
+        transform: translateY(-20px) scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.cell-modal-close {
+    position: absolute;
+    top: 10px;
+    right: 14px;
+    width: 32px;
+    height: 32px;
+    border: none;
+    background: rgba(0, 0, 0, 0.06);
+    border-radius: 50%;
+    font-size: 18px;
+    line-height: 32px;
+    text-align: center;
+    cursor: pointer;
+    color: #666;
+    transition: background 0.2s, color 0.2s;
+}
+
+.cell-modal-close:hover {
+    background: #ff4444;
+    color: white;
+}
+
+.cell-modal-content {
+    font-size: 20px;
+    color: #333;
+    line-height: 1.6;
+    word-wrap: break-word;
+}
