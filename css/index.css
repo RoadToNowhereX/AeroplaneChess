@@ -20,8 +20,57 @@
     box-sizing: border-box;
 }
 
+/* White flag icon on terminal (win) cells */
+.board-cell-flag {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.board-cell-flag::after {
+    content: '🚩';
+    font-size: 20px;
+    filter: grayscale(1) brightness(10);
+    line-height: 1;
+}
+
+/* Turn-in arrow base style */
 .board-cell-arrow {
-    /* Optional: could add arrow styles here if we strictly wanted direction indicators */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.board-cell-arrow::after {
+    content: '';
+    display: block;
+    width: 0;
+    height: 0;
+    border-style: solid;
+}
+
+/* Arrow pointing down (Red turn-in, ID 50) */
+.board-cell-arrow-down::after {
+    border-width: 14px 8px 0 8px;
+    border-color: white transparent transparent transparent;
+}
+
+/* Arrow pointing left (Blue turn-in, ID 11) */
+.board-cell-arrow-left::after {
+    border-width: 8px 14px 8px 0;
+    border-color: transparent white transparent transparent;
+}
+
+/* Arrow pointing up (Yellow turn-in, ID 24) */
+.board-cell-arrow-up::after {
+    border-width: 0 8px 14px 8px;
+    border-color: transparent transparent white transparent;
+}
+
+/* Arrow pointing right (Green turn-in, ID 37) */
+.board-cell-arrow-right::after {
+    border-width: 8px 0 8px 14px;
+    border-color: transparent transparent transparent white;
 }
 
 .dice {

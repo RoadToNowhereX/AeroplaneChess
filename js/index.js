@@ -426,6 +426,46 @@ function getBoardColor(colorName) {
 }
 
 /**
+ * Runway ID ranges and their corresponding player color
+ */
+var runwayMap = {
+    'red':    { start: 61, end: 66 },
+    'blue':   { start: 71, end: 76 },
+    'yellow': { start: 81, end: 86 },
+    'green':  { start: 91, end: 96 }
+};
+
+/**
+ * Turn-in point arrow directions (cells with r:'yes')
+ * Arrow points toward the runway entrance
+ */
+var turnArrowMap = {
+    50: 'down',   // Red: arrow pointing down into runway
+    11: 'left',   // Blue: arrow pointing left into runway
+    24: 'up',     // Yellow: arrow pointing up into runway
+    37: 'right'   // Green: arrow pointing right into runway
+};
+
+/**
+ * Get runway color for a given coord ID, or null if not a runway cell
+ */
+function getRunwayColor(id) {
+    for (var color in runwayMap) {
+        if (id >= runwayMap[color].start && id <= runwayMap[color].end) {
+            return color;
+        }
+    }
+    return null;
+}
+
+/**
+ * Check if a coord ID is a win (terminal) cell
+ */
+function isWinCell(id) {
+    return id === 66 || id === 76 || id === 86 || id === 96;
+}
+
+/**
  * Draw the board cells based on coordinates
  */
 function drawBoard() {
@@ -433,8 +473,28 @@ function drawBoard() {
     if (typeof COORD !== 'undefined') {
         for (var i = 0; i < COORD.length; i++) {
             var c = COORD[i];
-            var color = getBoardColor(c.color);
-            createBoardCell(c.top, c.left, color, c.id);
+            var runwayColor = getRunwayColor(c.id);
+            var cellColor;
+            var extraClass = '';
+            var innerHTML = '';
+
+            if (runwayColor) {
+                // Runway cell: use the player's color
+                cellColor = getBoardColor(runwayColor);
+                if (isWinCell(c.id)) {
+                    // Terminal cell: add white flag
+                    extraClass = 'board-cell-flag';
+                }
+            } else {
+                cellColor = getBoardColor(c.color);
+            }
+
+            // Check if this is a turn-in point (r:'yes')
+            if (turnArrowMap[c.id]) {
+                extraClass = 'board-cell-arrow board-cell-arrow-' + turnArrowMap[c.id];
+            }
+
+            createBoardCell(c.top, c.left, cellColor, c.id, extraClass);
         }
     }
 
@@ -457,11 +517,10 @@ function drawBoard() {
     }
 }
 
-function createBoardCell(top, left, color, text) {
+function createBoardCell(top, left, color, id, extraClass) {
     var cell = document.createElement('div');
-    cell.className = 'board-cell';
-    // Center the 40px cell relative to the 50px anticipated slot (top/left are likely top-left of the slot)
-    // Adding 5px offset to center it
+    cell.className = 'board-cell' + (extraClass ? ' ' + extraClass : '');
+    // Center the 40px cell relative to the 50px anticipated slot
     var topPos = parseInt(top) + 5;
     var leftPos = parseInt(left) + 5;
 
@@ -471,8 +530,5 @@ function createBoardCell(top, left, color, text) {
         'background-color': color
     });
 
-    // Optional: Add ID text for debugging or visual
-    // if(text) cell.innerHTML = text; 
-
-    $j('.main').prepend(cell); // Prepend so it's behind planes (though z-index handles it mostly)
+    $j('.main').prepend(cell);
 }
