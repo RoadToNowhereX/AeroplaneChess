@@ -17,7 +17,7 @@ var Rule = function () {
                 winNum++;
             }
         });
-        if (winNum == 4) {
+        if (winNum == (planeOption.pieceCount || 4)) {
             winFlag = true;
         }
         return winFlag;

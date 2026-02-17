@@ -19,6 +19,7 @@ var PlaneOption = function () {
     this.userList = [new PLANEUSER('red', 'normal'), new PLANEUSER('blue', 'close'), new PLANEUSER('yellow', 'close'), new PLANEUSER('green', 'close')];
     this.currentUser = 'red';  //当前用户
     this.takeoffNums = [6];  //起飞点数，默认为6
+    this.pieceCount = 4;  //每个玩家的棋子数量，默认为4
     /**
      * 设置起飞点数
      */
@@ -33,6 +34,13 @@ var PlaneOption = function () {
         }
         this.takeoffNums = nums;
         return true;
+    };
+    /**
+     * 设置棋子数量
+     */
+    this.setPieceCount = function () {
+        var selected = $j('#pieceCount input[type="radio"]:checked').val();
+        this.pieceCount = parseInt(selected) || 4;
     };
     /**
      * 设置默认首个启动用户
@@ -76,6 +84,7 @@ var PlaneOption = function () {
         if (!this.setTakeoffNums()) {
             return;  // 如果没有选择起飞点数，不开始游戏
         }
+        this.setPieceCount();
         this.setUserList();
         createPlane(planeOption.userList);
         $j("#sdn" + planeOption.currentUser).text('请投骰');

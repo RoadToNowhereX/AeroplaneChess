@@ -37,7 +37,8 @@ function createPlane(type) {
  * @param left
  */
 function addPlaneDiv(type, top, left) {
-    for (var i = 0; i < 4; i++) {
+    var count = planeOption.pieceCount || 4;
+    for (var i = 0; i < count; i++) {
         var plane = document.createElement('div');
         plane.className = 'plane';
         //plane.innerHTML = i + 1;
