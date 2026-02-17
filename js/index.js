@@ -429,10 +429,10 @@ function getBoardColor(colorName) {
  * Runway ID ranges and their corresponding player color
  */
 var runwayMap = {
-    'red':    { start: 61, end: 66 },
-    'blue':   { start: 71, end: 76 },
+    'red': { start: 61, end: 66 },
+    'blue': { start: 71, end: 76 },
     'yellow': { start: 81, end: 86 },
-    'green':  { start: 91, end: 96 }
+    'green': { start: 91, end: 96 }
 };
 
 /**
@@ -444,6 +444,21 @@ var turnArrowMap = {
     11: 'left',   // Blue: arrow pointing left into runway
     24: 'up',     // Yellow: arrow pointing up into runway
     37: 'right'   // Green: arrow pointing right into runway
+};
+
+/**
+ * Super jump arrow directions (cells with 'super' property and their targets)
+ * Arrow points in the direction of the super jump
+ */
+var superJumpArrowMap = {
+    5: 'down',    // Green super jump start
+    17: 'down',   // Green super jump end
+    18: 'left',   // Red super jump start
+    30: 'left',   // Red super jump end
+    31: 'up',     // Blue super jump start
+    43: 'up',     // Blue super jump end
+    44: 'right',  // Yellow super jump start
+    4: 'right'    // Yellow super jump end
 };
 
 /**
@@ -489,9 +504,10 @@ function drawBoard() {
                 cellColor = getBoardColor(c.color);
             }
 
-            // Check if this is a turn-in point (r:'yes')
-            if (turnArrowMap[c.id]) {
-                extraClass = 'board-cell-arrow board-cell-arrow-' + turnArrowMap[c.id];
+            // Check if this is a turn-in point (r:'yes') or super jump point
+            var arrowDir = turnArrowMap[c.id] || superJumpArrowMap[c.id];
+            if (arrowDir) {
+                extraClass = 'board-cell-arrow board-cell-arrow-' + arrowDir;
             }
 
             createBoardCell(c.top, c.left, cellColor, c.id, extraClass);
@@ -514,6 +530,75 @@ function drawBoard() {
                 createBoardCell(c.top, c.left, getBoardColor(group.color));
             }
         }
+    }
+
+    // Draw super jump dashed lines
+    drawSuperJumpLines();
+}
+
+/**
+ * Draw dashed lines for super jump paths
+ */
+function drawSuperJumpLines() {
+    var superJumps = [
+        { startId: 5, endId: 17, color: 'green', direction: 'vertical' },
+        { startId: 18, endId: 30, color: 'red', direction: 'horizontal' },
+        { startId: 31, endId: 43, color: 'blue', direction: 'vertical' },
+        { startId: 44, endId: 4, color: 'yellow', direction: 'horizontal' }
+    ];
+
+    var lightColors = {
+        'red': 'rgba(255, 82, 82, 0.45)',
+        'blue': 'rgba(68, 138, 255, 0.45)',
+        'yellow': 'rgba(255, 195, 0, 0.45)',
+        'green': 'rgba(76, 175, 80, 0.45)'
+    };
+
+    for (var i = 0; i < superJumps.length; i++) {
+        var sj = superJumps[i];
+        var startCoord = null, endCoord = null;
+
+        for (var j = 0; j < COORD.length; j++) {
+            if (COORD[j].id === sj.startId) startCoord = COORD[j];
+            if (COORD[j].id === sj.endId) endCoord = COORD[j];
+        }
+
+        if (!startCoord || !endCoord) continue;
+
+        // Center of each cell: COORD value + 25 (center of 50px slot)
+        var startCY = parseInt(startCoord.top) + 25;
+        var startCX = parseInt(startCoord.left) + 25;
+        var endCY = parseInt(endCoord.top) + 25;
+        var endCX = parseInt(endCoord.left) + 25;
+
+        var line = document.createElement('div');
+        line.className = 'super-jump-line';
+
+        if (sj.direction === 'vertical') {
+            var minTop = Math.min(startCY, endCY);
+            var height = Math.abs(endCY - startCY);
+            var avgLeft = Math.round((startCX + endCX) / 2);
+            $j(line).css({
+                'top': minTop + 'px',
+                'left': avgLeft + 'px',
+                'height': height + 'px',
+                'width': '0px',
+                'border-left': '4px dashed ' + lightColors[sj.color]
+            });
+        } else {
+            var minLeft = Math.min(startCX, endCX);
+            var width = Math.abs(endCX - startCX);
+            var avgTop = Math.round((startCY + endCY) / 2);
+            $j(line).css({
+                'top': avgTop + 'px',
+                'left': minLeft + 'px',
+                'width': width + 'px',
+                'height': '0px',
+                'border-top': '4px dashed ' + lightColors[sj.color]
+            });
+        }
+
+        $j('.main').prepend(line);
     }
 }
 

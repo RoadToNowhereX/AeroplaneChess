@@ -73,6 +73,13 @@
     border-color: transparent transparent transparent white;
 }
 
+/* Super jump dashed lines */
+.super-jump-line {
+    position: absolute;
+    z-index: 5;
+    pointer-events: none;
+}
+
 .dice {
     width: 110px;
     height: 110px;
