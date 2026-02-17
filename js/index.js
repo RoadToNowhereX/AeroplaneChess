@@ -95,14 +95,16 @@ function addPlaneEvent(state) {
             if (canTakeoff) {
 
                 if ($j(this).attr('state') != 'win') {
-                    currentUserPlane.click(function () {
+                    currentUserPlane.click(function (e) {
+                        e.stopImmediatePropagation();
                         movePlane(this);
                     }).addClass('pointer plane-glow');
                     flag = true;
                 }
             } else {
                 if ($j(this).attr('state') == 'ready' || $j(this).attr('state') == 'running') {
-                    currentUserPlane.click(function () {
+                    currentUserPlane.click(function (e) {
+                        e.stopImmediatePropagation();
                         movePlane(this);
                     }).addClass('pointer plane-glow');
                     flag = true;
@@ -663,7 +665,8 @@ $j(function () {
 
     // Click through pieces to show cell info when piece is not in movable state
     $j(document).on('click', '.plane', function (e) {
-        if (!$j(this).hasClass('pointer')) {
+        var state = $j(this).attr('state');
+        if (!$j(this).hasClass('pointer') && (state === 'ready' || state === 'running')) {
             var coordId = $j(this).attr('coordId');
             if (coordId) {
                 e.stopPropagation();
