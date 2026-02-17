@@ -628,11 +628,6 @@ function createBoardCell(top, left, color, id, extraClass) {
     $j('.main').prepend(cell);
 }
 
-/**
- * Cell info data store - maps cell id to text content
- * Default is "empty" for all cells
- */
-var cellInfoData = {};
 
 /**
  * Open the cell info modal
